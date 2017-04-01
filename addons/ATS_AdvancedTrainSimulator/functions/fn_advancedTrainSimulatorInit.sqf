@@ -23,8 +23,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #define ATRAIN_MAP_DISPLAY (findDisplay 12)
 #define ATRAIN_MAIN_DISPLAY (findDisplay 46)
 
-
-#define PROFILE_START(METHOD_NAME) 
+#define PROFILE_START
 #define PROFILE_STOP
 #define PROFILE_START2(METHOD_NAME) [METHOD_NAME,diag_tickTime] call ATRAIN_fnc_profileMethodStart
 #define PROFILE_STOP2 [diag_tickTime] call ATRAIN_fnc_profileMethodStop
@@ -256,26 +255,47 @@ ATRAIN_fnc_getTrainAtPosition = {
 	_foundTrain;
 };
 
+ATRAIN_Track_Definitions_Index = [
+	"Land_Track_01_3m_F",
+	"Land_Track_01_7deg_F",
+	"Land_Track_01_10m_F",
+	"Land_Track_01_15deg_F",
+	"Land_Track_01_20m_F",
+	"Land_Track_01_30deg_F",
+	"Land_Track_01_bridge_F",
+	"Land_Track_01_bumper_F",
+	"Land_Track_01_turnout_left_F",
+	"Land_Track_01_turnout_right_F",
+	"Land_straight40",
+	"Land_straight25",
+	"Land_left_turn",
+	"Land_right_turn",
+	"Land_curveL25",
+	"Land_Bridge",
+	"Land_terminator_concrete",
+	"Land_straight_down40"
+];
+
 // [Class Name, Center Point Offset, Is Split Track, Is End Track,Memory Point Height Offset]
 ATRAIN_Track_Definitions = [ 
- ["Land_Track_01_3m_F",0,false,false], 
- ["Land_Track_01_7deg_F",0.15,false,false], 
- ["Land_Track_01_10m_F",0,false,false], 
- ["Land_Track_01_15deg_F",0.3,false,false], 
- ["Land_Track_01_20m_F",0,false,false], 
- ["Land_Track_01_30deg_F",0.6,false,false], 
- ["Land_Track_01_bridge_F",0,false,false], 
- ["Land_Track_01_bumper_F",0,false,true], 
- ["Land_Track_01_turnout_left_F",0.55,true,false], 
- ["Land_Track_01_turnout_right_F",-0.55,true,false],
- ["Land_straight40",0,false,false,0.06],
- ["Land_straight25",0,false,false,0.06],
- ["Land_left_turn",1,true,false,0.06],
- ["Land_right_turn",-1,true,false,0.06],
- ["Land_curveL25",0.3,false,false,0.06],
- ["Land_Bridge",0,false,false,0.06],
- ["Land_terminator_concrete",0,false,true,0.06],
- ["Land_straight_down40",0,false,false,0.06]
+	["Land_Track_01_3m_F",0,false,false], 
+	["Land_Track_01_7deg_F",0.15,false,false], 
+	["Land_Track_01_10m_F",0,false,false], 
+	["Land_Track_01_15deg_F",0.3,false,false], 
+	["Land_Track_01_20m_F",0,false,false], 
+	["Land_Track_01_30deg_F",0.6,false,false], 
+	["Land_Track_01_bridge_F",0,false,false], 
+	["Land_Track_01_bumper_F",0,false,true], 
+	["Land_Track_01_turnout_left_F",0.55,true,false], 
+	["Land_Track_01_turnout_right_F",-0.55,true,false],
+	["Land_straight40",0,false,false,0.06],
+	["Land_straight25",0,false,false,0.06],
+	["Land_left_turn",1,true,false,0.06],
+	["Land_right_turn",-1,true,false,0.06],
+	["Land_curveL25",0.3,false,false,0.06],
+	["Land_Bridge",0,false,false,0.06],
+	["Land_terminator_concrete",0,false,true,0.06],
+	["Land_straight_down40",0,false,false,0.06]
 ];
 
 // [Class Name, Is Drivable, Is Rideable, Length In Meters, Model Position Offset, Animate Train ]
@@ -296,24 +316,44 @@ ATRAIN_Train_Definitions = [
 	["Land_red_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false]
 ];
 
+ATRAIN_Object_Model_To_Type_Map_Index = [
+	"track_01_3m_f.p3d",
+	"track_01_7deg_f.p3d",
+	"track_01_10m_f.p3d",
+	"track_01_15deg_f.p3d",
+	"track_01_20m_f.p3d",
+	"track_01_30deg_f.p3d",
+	"track_01_bridge_f.p3d",
+	"track_01_bumper_f.p3d",
+	"track_01_turnout_left_f.p3d",
+	"track_01_turnout_right_f.p3d",
+	"locomotive_01_v1_f.p3d",
+	"locomotive_01_v2_f.p3d",
+	"locomotive_01_v3_f.p3d",
+	"railwaycar_01_passenger_f.p3d",
+	"railwaycar_01_sugarcane_empty_f.p3d",
+	"railwaycar_01_sugarcane_f.p3d",
+	"railwaycar_01_tank_f.p3d"
+];
+
 ATRAIN_Object_Model_To_Type_Map = [
-	["track_01_3m_f.p3d","Land_Track_01_3m_F"],
-	["track_01_7deg_f.p3d","Land_Track_01_7deg_F"],
-	["track_01_10m_f.p3d","Land_Track_01_10m_F"],
-	["track_01_15deg_f.p3d","Land_Track_01_15deg_F"],
-	["track_01_20m_f.p3d","Land_Track_01_20m_F"],
-	["track_01_30deg_f.p3d","Land_Track_01_30deg_F"],
-	["track_01_bridge_f.p3d","Land_Track_01_bridge_F"],
-	["track_01_bumper_f.p3d","Land_Track_01_bumper_F"],
-	["track_01_turnout_left_f.p3d","Land_Track_01_turnout_left_F"],
-	["track_01_turnout_right_f.p3d","Land_Track_01_turnout_right_F"],
-	["locomotive_01_v1_f.p3d","Land_Locomotive_01_v1_F"],
-	["locomotive_01_v2_f.p3d","Land_Locomotive_01_v2_F"],
-	["locomotive_01_v3_f.p3d","Land_Locomotive_01_v3_F"],
-	["railwaycar_01_passenger_f.p3d","Land_RailwayCar_01_passenger_F"],
-	["railwaycar_01_sugarcane_empty_f.p3d","Land_RailwayCar_01_sugarcane_empty_F"],
-	["railwaycar_01_sugarcane_f.p3d","Land_RailwayCar_01_sugarcane_F"],
-	["railwaycar_01_tank_f.p3d","Land_RailwayCar_01_tank_F"]
+	["track_01_3m_f.p3d",["Land_Track_01_3m_F",true]],
+	["track_01_7deg_f.p3d",["Land_Track_01_7deg_F",true]],
+	["track_01_10m_f.p3d",["Land_Track_01_10m_F",true]],
+	["track_01_15deg_f.p3d",["Land_Track_01_15deg_F",true]],
+	["track_01_20m_f.p3d",["Land_Track_01_20m_F",true]],
+	["track_01_30deg_f.p3d",["Land_Track_01_30deg_F",true]],
+	["track_01_bridge_f.p3d",["Land_Track_01_bridge_F",true]],
+	["track_01_bumper_f.p3d",["Land_Track_01_bumper_F",true]],
+	["track_01_turnout_left_f.p3d",["Land_Track_01_turnout_left_F",true]],
+	["track_01_turnout_right_f.p3d",["Land_Track_01_turnout_right_F",true]],
+	["locomotive_01_v1_f.p3d",["Land_Locomotive_01_v1_F",true]],
+	["locomotive_01_v2_f.p3d",["Land_Locomotive_01_v2_F",true]],
+	["locomotive_01_v3_f.p3d",["Land_Locomotive_01_v3_F",true]],
+	["railwaycar_01_passenger_f.p3d",["Land_RailwayCar_01_passenger_F",true]],
+	["railwaycar_01_sugarcane_empty_f.p3d",["Land_RailwayCar_01_sugarcane_empty_F",true]],
+	["railwaycar_01_sugarcane_f.p3d",["Land_RailwayCar_01_sugarcane_F",true]],
+	["railwaycar_01_tank_f.p3d",["Land_RailwayCar_01_tank_F",true]]
 ];
 
 // Returns [Class Name, Is Static]
@@ -322,26 +362,24 @@ ATRAIN_fnc_getTypeOf = {
 	params ["_object"];
 	private _typeOfArray = [typeOf _object,false];
 	if( (_typeOfArray select 0) != "" ) exitWith { PROFILE_STOP; _typeOfArray };
-	private _objectString = str _object;
-	{
-		if( (_objectString find (_x select 0)) > 0 ) exitWith {
-			_typeOfArray = [_x select 1,true];
-		};
-	} forEach ATRAIN_Object_Model_To_Type_Map;
+	private _modelName = ((str _object) splitString ": ") param [1, ""];
+	private _modelToTypeMapIndex = ATRAIN_Object_Model_To_Type_Map_Index find _modelName;
+	if(_modelToTypeMapIndex >= 0) then {
+		_typeOfArray = (ATRAIN_Object_Model_To_Type_Map select _modelToTypeMapIndex) select 1;
+	};
 	PROFILE_STOP;
 	_typeOfArray;
 };
 
 ATRAIN_fnc_getTrackDefinition = {
-	PROFILE_START("ATRAIN_fnc_getTrackDefinition");
+	PROFILE_START("ATRAIN_fnc_getTrackDefinition2");
 	params ["_track"];
-	private _trackDef = [];
 	private _trackType = [_track] call ATRAIN_fnc_getTypeOf;
-	{
-		if((_trackType select 0) == (_x select 0)) exitWith {
-			_trackDef = _x;
-		};
-	} forEach ATRAIN_Track_Definitions;
+	private _trackDef = [];
+	private _trackDefIndex = ATRAIN_Track_Definitions_Index find (_trackType select 0);
+	if(_trackDefIndex >= 0) then {
+		_trackDef = ATRAIN_Track_Definitions select _trackDefIndex;
+	};
 	PROFILE_STOP;
 	_trackDef;
 };
@@ -485,9 +523,14 @@ ATRAIN_fnc_getProfile = {
 	[_profileIndex,_profile];
 };
 
+ATRAIN_fnc_resetProfile = {
+	ATRAIN_Method_Stack = [];
+	ATRAIN_Profiles = [];
+};
+
 ATRAIN_fnc_printProfiles = {
 	{
-		////diag_log str _x;
+		diag_log str _x;
 	} forEach ATRAIN_Profiles;
 };
 
@@ -701,6 +744,7 @@ ATRAIN_COUNT = 0;
 ATRAIN_TIME = 0;
 
 ATRAIN_fnc_findConnectedTrackNodes = {
+	PROFILE_START("ATRAIN_fnc_findConnectedTrackNodes");
 	params ["_track",["_sourceConnection",[]]];
 	private _trackWorldPaths = [_track] call ATRAIN_fnc_getTrackWorldPaths;
 	private _connectedTrackNodes = [];
@@ -816,12 +860,12 @@ ATRAIN_fnc_findConnectedTrackNodes = {
 		};
 		
 	} forEach _trackWorldPaths;
+	PROFILE_STOP;
 	_connectedTrackNodes;
 };
 
 ATRAIN_fnc_buildTrackMap = {
 	PROFILE_START("ATRAIN_fnc_buildTrackMap");
-	PROFILE_START2("ATRAIN_fnc_buildTrackMap");
 	params ["_track"];
 	private _startNodes = [_track] call ATRAIN_fnc_findConnectedTrackNodes;
 	if(count _startNodes == 0) exitWith {PROFILE_STOP; []};
@@ -861,7 +905,6 @@ ATRAIN_fnc_buildTrackMap = {
 		};
 	};
 	PROFILE_STOP;
-	PROFILE_STOP2;
 	_nodeMap;
 };
 
@@ -938,6 +981,7 @@ player addAction ["Test Track", {
 */
 
 ATRAIN_fnc_getTrackWorldPaths = {
+	PROFILE_START("ATRAIN_fnc_getTrackWorldPaths");
 	params ["_track"];
 	private _trackDef = [_track] call ATRAIN_fnc_getTrackDefinition;
 	if(count _trackDef == 0) exitWith {PROFILE_STOP; [];};
@@ -980,6 +1024,7 @@ ATRAIN_fnc_getTrackWorldPaths = {
 		_worldPath pushBack (AGLtoASL (_track modelToWorld (_pathMidpoint)));
 		_trackWorldPaths pushBack _worldPath;
 	};
+	PROFILE_STOP;
 	_trackWorldPaths;
 };
 
@@ -1232,7 +1277,7 @@ ATRAIN_fnc_serverEventHandlerLoop = {
 						//diag_log str ["TRACK",_track];
 						if(isNull _track) exitWith {};
 						["Loading Advanced Train Simulator (ATS)",0,0,99,2,0,3000] spawn bis_fnc_dynamicText;
-						private _trackMap = [_track] call ATRAIN_fnc_buildTrackMap;				
+						private _trackMap = [_track] call ATRAIN_fnc_buildTrackMap;
 						[_trackMap] call ATRAIN_fnc_updateTrackMap;
 						[_train, _driver] call ATRAIN_fnc_registerTrainAndDriver;
 						["",0,0,1,0,0,3000] spawn bis_fnc_dynamicText;
