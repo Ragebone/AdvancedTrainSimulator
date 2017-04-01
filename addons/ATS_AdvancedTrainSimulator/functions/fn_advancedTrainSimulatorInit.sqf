@@ -283,22 +283,23 @@ ATRAIN_Track_Definitions = [
 
 ATRAIN_Train_Definitions_Index = [];
 
-// [Class Name, Is Drivable, Is Rideable, Length In Meters, Model Position Offset, Animate Train ]
+// [Class Name, Is Drivable, Is Rideable, Length In Meters, Model Position Offset, Animate Train, Is Direction Reversed]
 ATRAIN_Train_Definitions = [
-	["Land_Locomotive_01_v1_F", true, false, 5.3, 12, [0,0,0.052],true],
-	["Land_Locomotive_01_v2_F", true, false, 5.3, 12, [0,0,0.052],true],
-	["Land_Locomotive_01_v3_F", true, false, 5.3, 12, [0,0,0.052],true],
-	["Land_RailwayCar_01_passenger_F", false, true, 5.5, 12, [0,0,0.06],true],
-	["Land_RailwayCar_01_sugarcane_empty_F", false, true, 3.2, 12, [0,0,0.052],true],
-	["Land_RailwayCar_01_sugarcane_F", false, true, 3.2, 12, [0,0,0.052],true],
-	["Land_RailwayCar_01_tank_F", false, true, 5.5, 12, [0,0,0.08],true],
-	["Land_loco_742_blue", true, false, 13.5, 19.4, [0,0.05,-0.14],false],
-	["Land_loco_742_red", true, false, 13.5, 19.4, [0,0.05,-0.14],false],
-	["Land_wagon_box", false, true, 12, 19.4, [0,-0.43,0.02],false],
-	["Land_wagon_flat", false, true, 17.1, 19.4, [0,-0.02,0.04],false],
-	["Land_wagon_tanker", false, true, 11.5, 19.4, [0,-0.05,0.02],false],
-	["Land_blue_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false],
-	["Land_red_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false]
+	["Land_Locomotive_01_v1_F", true, false, 5.3, 12, [0,0,0.052],true,false],
+	["Land_Locomotive_01_v2_F", true, false, 5.3, 12, [0,0,0.052],true,false],
+	["Land_Locomotive_01_v3_F", true, false, 5.3, 12, [0,0,0.052],true,false],
+	["Land_RailwayCar_01_passenger_F", false, true, 5.5, 12, [0,0,0.06],true,false],
+	["Land_RailwayCar_01_sugarcane_empty_F", false, true, 3.2, 12, [0,0,0.052],true,false],
+	["Land_RailwayCar_01_sugarcane_F", false, true, 3.2, 12, [0,0,0.052],true,false],
+	["Land_RailwayCar_01_tank_F", false, true, 5.5, 12, [0,0,0.08],true,false],
+	["Land_loco_742_blue", true, false, 13.5, 19.4, [0,0.05,-0.14],false,false],
+	["Land_loco_742_red", true, false, 13.5, 19.4, [0,0.05,-0.14],false,false],
+	["Land_wagon_box", false, true, 12, 19.4, [0,-0.43,0.02],false,false],
+	["Land_wagon_flat", false, true, 17.1, 19.4, [0,-0.02,0.04],false,false],
+	["Land_wagon_tanker", false, true, 11.5, 19.4, [0,-0.05,0.02],false,false],
+	["Land_blue_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false,false],
+	["Land_red_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false,false],
+	["sd60_up", true, false, 24, 19.4,  [0,0,0],false,true]
 ];
 
 ATRAIN_Object_Model_To_Type_Map_Index = [];
@@ -1356,11 +1357,12 @@ ATRAIN_fnc_initTrainObject = {
 		_train = [_train] call ATRAIN_fnc_hideTrainReplaceWithNew;
 	};
 	private _trainDef = [_train] call ATRAIN_fnc_getTrainDefinition;
-	_trainDef params ["_className", "_isDrivable", "_isRideable", "_carLength", "_maxSpeed", "_positionOffset","_animateTrain"];
+	_trainDef params ["_className", "_isDrivable", "_isRideable", "_carLength", "_maxSpeed", "_positionOffset","_animateTrain", "_isModelReversed"];
 	_train setVariable ["ATRAIN_Remote_Car_Length",_carLength,true];
 	_train setVariable ["ATRAIN_Remote_Train_Max_Velocity",_maxSpeed,true];
 	_train setVariable ["ATRAIN_Remote_Position_Offset",_positionOffset,true];
-	_train setVariable ["ATRAIN_Remove_Animate_Train",_animateTrain,true];
+	_train setVariable ["ATRAIN_Remote_Animate_Train",_animateTrain,true];
+	_train setVariable ["ATRAIN_Remote_Is_Model_Reversed",_isModelReversed,true];
 	_train enableSimulation false;
 	_train;
 };
@@ -1722,7 +1724,7 @@ ATRAIN_fnc_drawTrain = {
 		private _velocityFromLastToNewPosition = _x getVariable ["ATRAIN_Velocity_From_Last_To_New_Position",0];
 		private _directionFromLastToNewPosition = _x getVariable ["ATRAIN_Direction_From_Last_To_New_Position",_lastDrawDirection];
 		private _distanceFromLastToNewPosition = _x getVariable ["ATRAIN_Distance_From_Last_To_New_Position", 0];
-		private _animateTrain = _x getVariable ["ATRAIN_Remove_Animate_Train",false];
+		private _animateTrain = _x getVariable ["ATRAIN_Remote_Animate_Train",false];
 		
 		// Enable in-game simulation for front and rear cars (so that it can collide with objects)
 		
@@ -1791,7 +1793,7 @@ ATRAIN_fnc_drawTrain = {
 				private _trainVectorDirection = _rearAlignmentPointPosition vectorFromTo _frontAlignmentPointPosition;
 				private _trainPosition = _frontAlignmentPointPosition vectorAdd ((_rearAlignmentPointPosition vectorDiff _frontAlignmentPointPosition) vectorMultiply 0.5);
 				private _trainIsBackwards = _x getVariable ["ATRIAN_Remote_Is_Backwards", false];
-				private _animateTrain = _x getVariable ["ATRAIN_Remove_Animate_Train",false];
+				private _animateTrain = _x getVariable ["ATRAIN_Remote_Animate_Train",false];
 				if(_trainIsBackwards) then {
 					_trainVectorDirection = _trainVectorDirection vectorMultiply -1;
 				};
@@ -1861,6 +1863,11 @@ ATRAIN_fnc_simulateTrainVelocity = {
 		_trainAcceleration = 0;
 		_movementDirection = 0;
 		_trainDrag = _trainDrag * 2;
+	};
+	
+	private _trainModelReversed = _train getVariable ["ATRAIN_Remote_Is_Model_Reversed",false];
+	if(_trainModelReversed) then {
+		_movementDirection = _movementDirection * -1;
 	};
 	
 	private _trainMaxVelocity = _train getVariable ["ATRAIN_Remote_Train_Max_Velocity",12];
