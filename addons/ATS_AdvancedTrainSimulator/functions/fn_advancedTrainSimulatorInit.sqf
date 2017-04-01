@@ -255,26 +255,7 @@ ATRAIN_fnc_getTrainAtPosition = {
 	_foundTrain;
 };
 
-ATRAIN_Track_Definitions_Index = [
-	"Land_Track_01_3m_F",
-	"Land_Track_01_7deg_F",
-	"Land_Track_01_10m_F",
-	"Land_Track_01_15deg_F",
-	"Land_Track_01_20m_F",
-	"Land_Track_01_30deg_F",
-	"Land_Track_01_bridge_F",
-	"Land_Track_01_bumper_F",
-	"Land_Track_01_turnout_left_F",
-	"Land_Track_01_turnout_right_F",
-	"Land_straight40",
-	"Land_straight25",
-	"Land_left_turn",
-	"Land_right_turn",
-	"Land_curveL25",
-	"Land_Bridge",
-	"Land_terminator_concrete",
-	"Land_straight_down40"
-];
+ATRAIN_Track_Definitions_Index = [];
 
 // [Class Name, Center Point Offset, Is Split Track, Is End Track,Memory Point Height Offset]
 ATRAIN_Track_Definitions = [ 
@@ -294,9 +275,13 @@ ATRAIN_Track_Definitions = [
 	["Land_right_turn",-1,true,false,0.06],
 	["Land_curveL25",0.3,false,false,0.06],
 	["Land_Bridge",0,false,false,0.06],
+	["Land_stonebridge",0,false,false,0.06],
+	["Land_Bridgehalf",0,false,false,0.06],
 	["Land_terminator_concrete",0,false,true,0.06],
 	["Land_straight_down40",0,false,false,0.06]
 ];
+
+ATRAIN_Train_Definitions_Index = [];
 
 // [Class Name, Is Drivable, Is Rideable, Length In Meters, Model Position Offset, Animate Train ]
 ATRAIN_Train_Definitions = [
@@ -316,25 +301,7 @@ ATRAIN_Train_Definitions = [
 	["Land_red_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false]
 ];
 
-ATRAIN_Object_Model_To_Type_Map_Index = [
-	"track_01_3m_f.p3d",
-	"track_01_7deg_f.p3d",
-	"track_01_10m_f.p3d",
-	"track_01_15deg_f.p3d",
-	"track_01_20m_f.p3d",
-	"track_01_30deg_f.p3d",
-	"track_01_bridge_f.p3d",
-	"track_01_bumper_f.p3d",
-	"track_01_turnout_left_f.p3d",
-	"track_01_turnout_right_f.p3d",
-	"locomotive_01_v1_f.p3d",
-	"locomotive_01_v2_f.p3d",
-	"locomotive_01_v3_f.p3d",
-	"railwaycar_01_passenger_f.p3d",
-	"railwaycar_01_sugarcane_empty_f.p3d",
-	"railwaycar_01_sugarcane_f.p3d",
-	"railwaycar_01_tank_f.p3d"
-];
+ATRAIN_Object_Model_To_Type_Map_Index = [];
 
 ATRAIN_Object_Model_To_Type_Map = [
 	["track_01_3m_f.p3d",["Land_Track_01_3m_F",true]],
@@ -356,6 +323,21 @@ ATRAIN_Object_Model_To_Type_Map = [
 	["railwaycar_01_tank_f.p3d",["Land_RailwayCar_01_tank_F",true]]
 ];
 
+ATRAIN_fnc_rebuildArrayLookupIndexes = {
+	ATRAIN_Track_Definitions_Index = [];
+	{
+		ATRAIN_Track_Definitions_Index pushBack (toLower (_x select 0));
+	} forEach ATRAIN_Track_Definitions;
+	ATRAIN_Train_Definitions_Index = [];
+	{
+		ATRAIN_Train_Definitions_Index pushBack (toLower (_x select 0));
+	} forEach ATRAIN_Train_Definitions;
+	ATRAIN_Object_Model_To_Type_Map_Index = [];
+	{
+		ATRAIN_Object_Model_To_Type_Map_Index pushBack (toLower (_x select 0));
+	} forEach ATRAIN_Object_Model_To_Type_Map;
+};
+
 // Returns [Class Name, Is Static]
 ATRAIN_fnc_getTypeOf = {
 	PROFILE_START("ATRAIN_fnc_getTypeOf");
@@ -363,7 +345,7 @@ ATRAIN_fnc_getTypeOf = {
 	private _typeOfArray = [typeOf _object,false];
 	if( (_typeOfArray select 0) != "" ) exitWith { PROFILE_STOP; _typeOfArray };
 	private _modelName = ((str _object) splitString ": ") param [1, ""];
-	private _modelToTypeMapIndex = ATRAIN_Object_Model_To_Type_Map_Index find _modelName;
+	private _modelToTypeMapIndex = ATRAIN_Object_Model_To_Type_Map_Index find (toLower _modelName);
 	if(_modelToTypeMapIndex >= 0) then {
 		_typeOfArray = (ATRAIN_Object_Model_To_Type_Map select _modelToTypeMapIndex) select 1;
 	};
@@ -376,7 +358,7 @@ ATRAIN_fnc_getTrackDefinition = {
 	params ["_track"];
 	private _trackType = [_track] call ATRAIN_fnc_getTypeOf;
 	private _trackDef = [];
-	private _trackDefIndex = ATRAIN_Track_Definitions_Index find (_trackType select 0);
+	private _trackDefIndex = ATRAIN_Track_Definitions_Index find toLower (_trackType select 0);
 	if(_trackDefIndex >= 0) then {
 		_trackDef = ATRAIN_Track_Definitions select _trackDefIndex;
 	};
@@ -389,11 +371,10 @@ ATRAIN_fnc_getTrainDefinition = {
 	params ["_train"];
 	private _trainDef = [];
 	private _trainType = [_train] call ATRAIN_fnc_getTypeOf;
-	{
-		if((_trainType select 0) == (_x select 0)) exitWith {
-			_trainDef = _x;
-		};
-	} forEach ATRAIN_Train_Definitions;
+	private _trainDefIndex = ATRAIN_Train_Definitions_Index find toLower (_trainType select 0);
+	if(_trainDefIndex >= 0) then {
+		_trainDef = ATRAIN_Train_Definitions select _trainDefIndex;
+	};
 	PROFILE_STOP;
 	_trainDef;
 };
@@ -2308,16 +2289,6 @@ ATRAIN_fnc_managePlayerTrainActions = {
 	};
 	
 };
-
-
-if(hasInterface) then {
-	[] spawn {
-		while {true} do {
-			[] call ATRAIN_fnc_managePlayerTrainActions;
-			sleep 0.1;
-		};
-	};
-};
 		
 ATRAIN_fnc_isPassengerMoving = {
 	params ["_player"];
@@ -2423,10 +2394,22 @@ ATRAIN_fnc_preloadAllTracksNearEditorPlacedConnections = {
 
 ATRAIN_fnc_init = {
 
+	[] call ATRAIN_fnc_rebuildArrayLookupIndexes;
+	
 	[] call ATRAIN_fnc_preloadAllTracksNearEditorPlacedConnections;
 
 	// Start train drawing handler
 	addMissionEventHandler ["EachFrame", {call ATRAIN_fnc_drawEventHandler}];
+	
+	// Start player action handler
+	if(hasInterface) then {
+		[] spawn {
+			while {true} do {
+				[] call ATRAIN_fnc_managePlayerTrainActions;
+				sleep 0.1;
+			};
+		};
+	};
 
 	// Start train speed simulation handler
 	[] spawn {
