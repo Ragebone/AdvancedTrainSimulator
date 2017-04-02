@@ -291,22 +291,22 @@ ATRAIN_Train_Definitions_Index = [];
 
 // [Class Name, Is Drivable, Is Rideable, Length In Meters, Model Position Offset, Animate Train, Is Direction Reversed]
 ATRAIN_Train_Definitions = [
-	["Land_Locomotive_01_v1_F", true, false, 5.3, 12, [0,0,0.052],true,false],
-	["Land_Locomotive_01_v2_F", true, false, 5.3, 12, [0,0,0.052],true,false],
-	["Land_Locomotive_01_v3_F", true, false, 5.3, 12, [0,0,0.052],true,false],
-	["Land_RailwayCar_01_passenger_F", false, true, 5.5, 12, [0,0,0.06],true,false],
-	["Land_RailwayCar_01_sugarcane_empty_F", false, true, 3.2, 12, [0,0,0.052],true,false],
-	["Land_RailwayCar_01_sugarcane_F", false, true, 3.2, 12, [0,0,0.052],true,false],
-	["Land_RailwayCar_01_tank_F", false, true, 5.5, 12, [0,0,0.08],true,false],
-	["Land_loco_742_blue", true, false, 13.5, 19.4, [0,0.05,-0.14],false,false],
-	["Land_loco_742_red", true, false, 13.5, 19.4, [0,0.05,-0.14],false,false],
-	["Land_wagon_box", false, true, 12, 19.4, [0,-0.43,0.02],false,false],
-	["Land_wagon_flat", false, true, 17.1, 19.4, [0,-0.02,0.04],false,false],
-	["Land_wagon_tanker", false, true, 11.5, 19.4, [0,-0.05,0.02],false,false],
-	["Land_blue_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false,false],
-	["Land_red_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false,false],
-	["sd60_up", true, false, 24, 19.4,  [0,0,0],false,true],
-	["babe_loco", true, false, 12, 19.4,  [0,0,0],false,true]
+	["Land_Locomotive_01_v1_F", true, false, 5.3, 12, [0,0,0.052],true,false, []],
+	["Land_Locomotive_01_v2_F", true, false, 5.3, 12, [0,0,0.052],true,false, []],
+	["Land_Locomotive_01_v3_F", true, false, 5.3, 12, [0,0,0.052],true,false, []],
+	["Land_RailwayCar_01_passenger_F", false, true, 5.5, 12, [0,0,0.06],true,false, []],
+	["Land_RailwayCar_01_sugarcane_empty_F", false, true, 3.2, 12, [0,0,0.052],true,false, []],
+	["Land_RailwayCar_01_sugarcane_F", false, true, 3.2, 12, [0,0,0.052],true,false, []],
+	["Land_RailwayCar_01_tank_F", false, true, 5.5, 12, [0,0,0.08],true,false, []],
+	["Land_loco_742_blue", true, false, 13.5, 19.4, [0,0.05,-0.14],false,false, []],
+	["Land_loco_742_red", true, false, 13.5, 19.4, [0,0.05,-0.14],false,false, []],
+	["Land_wagon_box", false, true, 12, 19.4, [0,-0.43,0.02],false,false, []],
+	["Land_wagon_flat", false, true, 17.1, 19.4, [0,-0.02,0.04],false,false, []],
+	["Land_wagon_tanker", false, true, 11.5, 19.4, [0,-0.05,0.02],false,false, []],
+	["Land_blue_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false,false, []],
+	["Land_red_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false,false, []],
+	["sd60_up", true, false, 24, 19.4,  [0,0,0],false,true, []],
+	["babe_loco", true, false, 12, 19.4,  [0,0,0],false,false, [["steam","steam"]] ]
 ];
 
 ATRAIN_Object_Model_To_Type_Map_Index = [];
@@ -1382,12 +1382,13 @@ ATRAIN_fnc_initTrainObject = {
 		_train = [_train] call ATRAIN_fnc_hideTrainReplaceWithNew;
 	};
 	private _trainDef = [_train] call ATRAIN_fnc_getTrainDefinition;
-	_trainDef params ["_className", "_isDrivable", "_isRideable", "_carLength", "_maxSpeed", "_positionOffset","_animateTrain", "_isModelReversed"];
+	_trainDef params ["_className", "_isDrivable", "_isRideable", "_carLength", "_maxSpeed", "_positionOffset","_animateTrain", "_isModelReversed", "_particleEffects"];
 	_train setVariable ["ATRAIN_Remote_Car_Length",_carLength,true];
 	_train setVariable ["ATRAIN_Remote_Train_Max_Velocity",_maxSpeed,true];
 	_train setVariable ["ATRAIN_Remote_Position_Offset",_positionOffset,true];
 	_train setVariable ["ATRAIN_Remote_Animate_Train",_animateTrain,true];
 	_train setVariable ["ATRAIN_Remote_Is_Model_Reversed",_isModelReversed,true];
+	_train setVariable ["ATRAIN_Remote_Particle_Effects",_particleEffects,true];
 	_train enableSimulation false;
 	_train;
 };
@@ -1695,6 +1696,75 @@ ATRAIN_fnc_cleanUpNodePath = {
 	_train setVariable ["ATRAIN_Local_Node_Path",_nodePath];
 	_train setVariable ["ATRAIN_Local_Node_Path_Distance",_trainNodePathDistance];
 	_train setVariable ["ATRAIN_Local_Distance_From_Front",_trainDistanceFromStart];
+};
+
+ATRAIN_fnc_simulateTrainParticleEffects = {
+	params ["_train"];
+	private _trainSpeed = _train getVariable ["ATRAIN_Local_Velocity",0];
+	private _trainCars = _train getVariable ["ATRAIN_Remote_Cars",[_train]];
+	{
+		private _trainCar = _x;
+		private _particleEffects = _trainCar getVariable ["ATRAIN_Remote_Particle_Effects",[]];
+		private _particleSourcs = _trainCar getVariable ["ATRAIN_Local_Particle_Sources",[]];
+		private _localCopy = _trainCar getVariable ["ATRAIN_Local_Copy", objNull];
+		if(!isNull _localCopy) then {
+			if(_trainSpeed == 0 && count _particleSourcs > 0) then {
+				{
+					deleteVehicle _x;
+				} forEach _particleSourcs;
+				_trainCar setVariable ["ATRAIN_Local_Particle_Sources",nil];
+			};
+			if(_trainSpeed != 0 && count _particleSourcs == 0) then {
+				{
+					_x params ["_particleType","_modelPosition"];
+					if(typeName _modelPosition == "STRING") then {
+						_modelPosition = _localCopy selectionPosition [_modelPosition, "Memory"];
+					};
+					
+					if(_particleType == "steam") then {
+						private _source = "#particlesource" createVehicleLocal (_localCopy modelToWorld _modelPosition);
+												
+						_source setParticleParams    
+							[["\A3\data_f\ParticleEffects\Universal\smoke.p3d",1,0,1,0],"",    
+							"billboard",    
+							0,    
+							1,    
+							_modelPosition,    
+							[0, 0, 2],    
+							3,1.35,1,-0.1,    
+							[0.5, 2],    
+							[[1,1,1,0.25], [1,1,1,0.5], [1,1,1,0]],    
+							[2,2],    
+							0.1,    
+							0.08,    
+							"",    
+							"",    
+							_localCopy,
+							0,    
+							false,    
+							0,    
+							[[0,0,0,0]]];    
+							 
+						 _source setParticleRandom  
+							[2,  
+							[0,0,0.1],  
+							[0,0,0.2],  
+							1,  
+							0.2,  
+							[0.25,0.25,0.25,1],  
+							0.01,  
+							0.03,  
+							10];    
+							 
+						_source setDropInterval 0.001;
+						
+						_particleSourcs pushBack _source;
+					};
+				} forEach _particleEffects;
+				_trainCar setVariable ["ATRAIN_Local_Particle_Sources",_particleSourcs];
+			};
+		};
+	} forEach _trainCars;
 };
 
 ATRAIN_fnc_setWheelSpeed = {
@@ -2440,6 +2510,17 @@ ATRAIN_fnc_init = {
 				[] call ATRAIN_fnc_managePlayerTrainActions;
 				sleep 0.1;
 			};
+		};
+	};
+	
+	// Start train particle effects simulation handler
+	[] spawn {
+		while {true} do {
+			private _registeredTrains = missionNamespace getVariable ["ATRAIN_Registered_Trains",[]];
+			{
+				[_x] call ATRAIN_fnc_simulateTrainParticleEffects;
+			} forEach _registeredTrains;
+			sleep 1;
 		};
 	};
 
