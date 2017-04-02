@@ -270,15 +270,21 @@ ATRAIN_Track_Definitions = [
 	["Land_Track_01_turnout_left_F",0.55,true,false], 
 	["Land_Track_01_turnout_right_F",-0.55,true,false],
 	["Land_straight40",0,false,false,0.06],
-	["Land_straight25",0,false,false,0.06],
 	["Land_left_turn",1,true,false,0.06],
 	["Land_right_turn",-1,true,false,0.06],
-	["Land_curveL25",0.3,false,false,0.06],
+	["Land_straight25",0,false,false,0.06],
 	["Land_Bridge",0,false,false,0.06],
+	["Land_terminator_concrete",0,false,true,0.06],
+	["Land_straight_down40",0,false,false,0.06],
 	["Land_stonebridge",0,false,false,0.06],
 	["Land_Bridgehalf",0,false,false,0.06],
-	["Land_terminator_concrete",0,false,true,0.06],
-	["Land_straight_down40",0,false,false,0.06]
+	["Land_road_xing_25",0,false,false,0.06],
+	["Land_xroad_10",0,false,false,0.06],
+	["Land_xroad_25",0,false,false,0.06],
+	["Land_curveR25_5",0.3,false,false,0.06],
+	["Land_curveL30_20",0.3,false,false,0.06],
+	["Land_curveL25_10",0.3,false,false,0.06],
+	["Land_curveL25_5",0.3,false,false,0.06]
 ];
 
 ATRAIN_Train_Definitions_Index = [];
@@ -299,7 +305,8 @@ ATRAIN_Train_Definitions = [
 	["Land_wagon_tanker", false, true, 11.5, 19.4, [0,-0.05,0.02],false,false],
 	["Land_blue_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false,false],
 	["Land_red_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false,false],
-	["sd60_up", true, false, 24, 19.4,  [0,0,0],false,true]
+	["sd60_up", true, false, 24, 19.4,  [0,0,0],false,true],
+	["babe_loco", true, false, 12, 19.4,  [0,0,0],false,true]
 ];
 
 ATRAIN_Object_Model_To_Type_Map_Index = [];
@@ -321,7 +328,25 @@ ATRAIN_Object_Model_To_Type_Map = [
 	["railwaycar_01_passenger_f.p3d",["Land_RailwayCar_01_passenger_F",true]],
 	["railwaycar_01_sugarcane_empty_f.p3d",["Land_RailwayCar_01_sugarcane_empty_F",true]],
 	["railwaycar_01_sugarcane_f.p3d",["Land_RailwayCar_01_sugarcane_F",true]],
-	["railwaycar_01_tank_f.p3d",["Land_RailwayCar_01_tank_F",true]]
+	["railwaycar_01_tank_f.p3d",["Land_RailwayCar_01_tank_F",true]],
+	["blue_loco.p3d",["Land_blue_loco",true]],
+	["red_loco.p3d",["Land_red_loco",true]],
+	["straight40.p3d",["Land_straight40",true]],
+	["right_turn.p3d",["Land_left_turn",true]],
+	["right_turn.p3d",["Land_right_turn",true]],
+	["straight25.p3d",["Land_straight25",true]],
+	["Bridge.p3d",["Land_Bridge",true]],
+	["straight_down40.p3d",["Land_terminator_concrete",true]],
+	["terminator_concrete.p3d",["Land_straight_down40",true]],
+	["stonebridge.p3d",["Land_stonebridge",true]],
+	["Bridgehalf.p3d",["Land_Bridgehalf",true]],
+	["road_xing_25.p3d",["Land_road_xing_25",true]],
+	["xroad_10.p3d",["Land_xroad_10",true]],
+	["xroad_25.p3d",["Land_xroad_25",true]],
+	["curveR25_5.p3d",["Land_curveR25_5",true]],
+	["curveL30_20.p3d",["Land_curveL30_20",true]],
+	["curveL25_10.p3d",["Land_curveL25_10",true]],
+	["curveL25_5.p3d",["Land_curveL25_5",true]]
 ];
 
 ATRAIN_fnc_rebuildArrayLookupIndexes = {
