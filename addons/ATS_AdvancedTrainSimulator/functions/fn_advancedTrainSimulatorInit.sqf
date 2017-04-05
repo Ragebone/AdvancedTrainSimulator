@@ -284,29 +284,31 @@ ATRAIN_Track_Definitions = [
 	["Land_curveR25_5",0.3,false,false,0.06],
 	["Land_curveL30_20",0.3,false,false,0.06],
 	["Land_curveL25_10",0.3,false,false,0.06],
-	["Land_curveL25_5",0.3,false,false,0.06]
+	["Land_curveL25_5",0.3,false,false,0.06], 
+	["ATS_cable_1",0,false,false]
 ];
 
 ATRAIN_Train_Definitions_Index = [];
 
-// [Class Name, Is Drivable, Is Rideable, Length In Meters, Model Position Offset, Animate Train, Is Direction Reversed]
+// [Class Name, Is Drivable, Is Rideable, Length In Meters, Model Position Offset, Animate Train, Is Direction Reversed, Particle Effects, Is Cable Car]
 ATRAIN_Train_Definitions = [
-	["Land_Locomotive_01_v1_F", true, false, 5.3, 12, [0,0,0.052],true,false, []],
-	["Land_Locomotive_01_v2_F", true, false, 5.3, 12, [0,0,0.052],true,false, []],
-	["Land_Locomotive_01_v3_F", true, false, 5.3, 12, [0,0,0.052],true,false, []],
-	["Land_RailwayCar_01_passenger_F", false, true, 5.5, 12, [0,0,0.06],true,false, []],
-	["Land_RailwayCar_01_sugarcane_empty_F", false, true, 3.2, 12, [0,0,0.052],true,false, []],
-	["Land_RailwayCar_01_sugarcane_F", false, true, 3.2, 12, [0,0,0.052],true,false, []],
-	["Land_RailwayCar_01_tank_F", false, true, 5.5, 12, [0,0,0.08],true,false, []],
-	["Land_loco_742_blue", true, false, 13.5, 19.4, [0,0.05,-0.14],false,false, []],
-	["Land_loco_742_red", true, false, 13.5, 19.4, [0,0.05,-0.14],false,false, []],
-	["Land_wagon_box", false, true, 12, 19.4, [0,-0.43,0.02],false,false, []],
-	["Land_wagon_flat", false, true, 17.1, 19.4, [0,-0.02,0.04],false,false, []],
-	["Land_wagon_tanker", false, true, 11.5, 19.4, [0,-0.05,0.02],false,false, []],
-	["Land_blue_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false,false, []],
-	["Land_red_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false,false, []],
-	["sd60_up", true, false, 24, 19.4,  [0,0,0],false,true, []],
-	["babe_loco", true, false, 12, 19.4,  [0,0,0],false,false, [["steam","steam"]] ]
+	["Land_Locomotive_01_v1_F", true, false, 5.3, 12, [0,0,0.052],true,false, [], false],
+	["Land_Locomotive_01_v2_F", true, false, 5.3, 12, [0,0,0.052],true,false, [], false],
+	["Land_Locomotive_01_v3_F", true, false, 5.3, 12, [0,0,0.052],true,false, [], false],
+	["Land_RailwayCar_01_passenger_F", false, true, 5.5, 12, [0,0,0.06],true,false, [], false],
+	["Land_RailwayCar_01_sugarcane_empty_F", false, true, 3.2, 12, [0,0,0.052],true,false, [], false],
+	["Land_RailwayCar_01_sugarcane_F", false, true, 3.2, 12, [0,0,0.052],true,false, [], false],
+	["Land_RailwayCar_01_tank_F", false, true, 5.5, 12, [0,0,0.08],true,false, [], false],
+	["Land_loco_742_blue", true, false, 13.5, 19.4, [0,0.05,-0.14],false,false, [], false],
+	["Land_loco_742_red", true, false, 13.5, 19.4, [0,0.05,-0.14],false,false, [], false],
+	["Land_wagon_box", false, true, 12, 19.4, [0,-0.43,0.02],false,false, [], false],
+	["Land_wagon_flat", false, true, 17.1, 19.4, [0,-0.02,0.04],false,false, [], false],
+	["Land_wagon_tanker", false, true, 11.5, 19.4, [0,-0.05,0.02],false,false, [], false],
+	["Land_blue_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false,false, [], false],
+	["Land_red_loco", true, false, 13.5, 19.4,  [0,0.05,-0.14],false,false, [], false],
+	["sd60_up", true, false, 24, 19.4,  [0,0,0],false,true, [], false],
+	["babe_loco", true, false, 12, 19.4,  [0,0,0],false,false, [["steam","steam"]], false ],
+	["ATS_CableCar_1", true, true, 2, 8, [0,0,-7.4],true,false, [], true]
 ];
 
 ATRAIN_Object_Model_To_Type_Map_Index = [];
@@ -1066,6 +1068,8 @@ ATRAIN_fnc_getTrackUnderTrain = {
 	params ["_train"];
 	private _trainPositionASL = getPosASLVisual _train;
 	private _trainVectorDir = vectorDir _train;
+	private _offset = _train getVariable ["ATRAIN_Remote_Position_Offset",[0,0,0]];
+	_trainPositionASL = _trainPositionASL vectorAdd (_offset vectorMultiply -1);
 	private _tracks = [_trainPositionASL,_train,_trainVectorDir] call ATRAIN_fnc_getTracksAtPosition;
 	private _foundTrack = objNull;
 	if(count _tracks > 0) then {
@@ -1382,13 +1386,14 @@ ATRAIN_fnc_initTrainObject = {
 		_train = [_train] call ATRAIN_fnc_hideTrainReplaceWithNew;
 	};
 	private _trainDef = [_train] call ATRAIN_fnc_getTrainDefinition;
-	_trainDef params ["_className", "_isDrivable", "_isRideable", "_carLength", "_maxSpeed", "_positionOffset","_animateTrain", "_isModelReversed", "_particleEffects"];
+	_trainDef params ["_className", "_isDrivable", "_isRideable", "_carLength", "_maxSpeed", "_positionOffset","_animateTrain", "_isModelReversed", "_particleEffects", "_isCableCar"];
 	_train setVariable ["ATRAIN_Remote_Car_Length",_carLength,true];
 	_train setVariable ["ATRAIN_Remote_Train_Max_Velocity",_maxSpeed,true];
 	_train setVariable ["ATRAIN_Remote_Position_Offset",_positionOffset,true];
 	_train setVariable ["ATRAIN_Remote_Animate_Train",_animateTrain,true];
 	_train setVariable ["ATRAIN_Remote_Is_Model_Reversed",_isModelReversed,true];
 	_train setVariable ["ATRAIN_Remote_Particle_Effects",_particleEffects,true];
+	_train setVariable ["ATRAIN_Remote_Is_Cable_Car",_isCableCar,true];
 	_train enableSimulation false;
 	_train;
 };
@@ -1820,6 +1825,7 @@ ATRAIN_fnc_drawTrain = {
 		private _directionFromLastToNewPosition = _x getVariable ["ATRAIN_Direction_From_Last_To_New_Position",_lastDrawDirection];
 		private _distanceFromLastToNewPosition = _x getVariable ["ATRAIN_Distance_From_Last_To_New_Position", 0];
 		private _animateTrain = _x getVariable ["ATRAIN_Remote_Animate_Train",false];
+		private _isCableCar = _x getVariable ["ATRAIN_Remote_Is_Cable_Car",false];
 		
 		// Enable in-game simulation for front and rear cars (so that it can collide with objects)
 		
@@ -1849,6 +1855,10 @@ ATRAIN_fnc_drawTrain = {
 			_percentMovedFromLastPosition = (_percentMovedFromLastPosition max 0) min 1;
 			private _currentDrawDirection = vectorNormalized ((_lastDrawDirection vectorMultiply (1-_percentMovedFromLastPosition)) vectorAdd (_newDrawDirection vectorMultiply _percentMovedFromLastPosition));
 			private _currentDrawPosition = _lastDrawPosition vectorAdd (_directionFromLastToNewPosition vectorMultiply (_distanceMovedFromLastPosition min _distanceFromLastToNewPosition));
+			
+			if(_isCableCar) then {
+				_currentDrawDirection set [2,0];
+			};
 			
 			_localCopy setVectorDirAndUp [_currentDrawDirection,[0,0,1]];
 			_localCopy setPosASL _currentDrawPosition;
@@ -2392,9 +2402,8 @@ ATRAIN_fnc_managePlayerTrainActions = {
 	
 };
 		
-ATRAIN_fnc_isPassengerMoving = {
-	params ["_player"];
-	(_player getVariable ["ATRAIN_Passenger_Forward", 0]) + (_player getVariable ["ATRAIN_Passenger_Backward", 0]) + (_player getVariable ["ATRAIN_Passenger_Right", 0]) + (_player getVariable ["ATRAIN_Passenger_Left", 0]) > 0;
+ATRAIN_fnc_isPlayerMoving = {
+	(inputAction "moveForward") + (inputAction "moveBack") + (inputAction "turnLeft") + (inputAction "turnRight") > 0;
 };
 
 ATRAIN_RIDE_ON_TRAIN_EVENT_HANDLER_PARAMS = [];
@@ -2413,24 +2422,40 @@ ATRAIN_fnc_rideOnTrainEventHandler = {
 	_player setVariable ["ATRAIN_Riding_On_Train_Last_Train_Position_ASL", _currentTrainPositionASL];
 	_player setVariable ["ATRAIN_Riding_On_Train_Last_Train_Dir", _currentTrainDir];
 	
-	private _isPlayerMoving = [_player] call ATRAIN_fnc_isPassengerMoving;
+	private _lastPlayerPositionModel = _player getVariable ["ATRAIN_Riding_On_Train_Last_Player_Position_Model", _train worldToModelVisual (ASLToAGL getPosASLVisual _player)];	
 	
-	if(_isPlayerMoving) then {	
-		_player setVariable ["ATRAIN_Riding_On_Train_Last_Player_Position_Model", _train worldToModelVisual (ASLToAGL getPosASLVisual vehicle _player) ];
-	};
+	private _isPlayerMoving = call ATRAIN_fnc_isPlayerMoving;
 	
-	private _lastPlayerPositionModel = _player getVariable ["ATRAIN_Riding_On_Train_Last_Player_Position_Model", _train worldToModelVisual (ASLToAGL getPosASLVisual vehicle _player)];	
-
-	if(_currentTrainPositionASL distance _lastTrainPositionASL > 0) then {
-		
-		if(!_isPlayerMoving) then {	
-			(vehicle _player) setVelocity [0,0,0];
+	private _lastPlayerPositionASL = AGLtoASL (_train modelToWorldVisual _lastPlayerPositionModel);
+	
+	if( _isPlayerMoving ) then {
+		if(inputAction "moveForward" > 0)then
+		{
+			private _newPlayerPositionASL = _lastPlayerPositionASL vectorAdd ((vectorDir _player) vectorMultiply 0.05);
+			private _newPlayerPositionModel =  _train worldToModelVisual (ASLToAGL _newPlayerPositionASL);
+			_lastPlayerPositionModel = _lastPlayerPositionModel vectorAdd ((_lastPlayerPositionModel vectorFromTo _newPlayerPositionModel) vectorMultiply 0.05);
 		};
-		
-		(vehicle _player) setDir (getDir _player + _currentTrainDir - _lastTrainDir);
-		(vehicle _player) setPosASL (AGLtoASL (_train modelToWorldVisual _lastPlayerPositionModel));
-
+		/*if(inputAction "moveBack" > 0)then
+		{
+			_lastPlayerPositionModel = _lastPlayerPositionModel vectorAdd ((vectorDir _player) vectorMultiply -0.05);
+		};
+		if(inputAction "turnLeft" > 0)then
+		{
+			_lastPlayerPositionModel = _lastPlayerPositionModel vectorAdd (((vectorDir _player) vectorCrossProduct (vectorUp _player)) vectorMultiply 0.05);
+		};
+		if(inputAction "turnRight" > 0)then
+		{
+			_lastPlayerPositionModel = _lastPlayerPositionModel vectorAdd (((vectorDir _player) vectorCrossProduct (vectorUp _player)) vectorMultiply -0.05);
+		};*/
+		_player setVariable ["ATRAIN_Riding_On_Train_Last_Player_Position_Model", _lastPlayerPositionModel];
 	};
+
+	if(_currentTrainPositionASL distance _lastTrainPositionASL > 0 || _isPlayerMoving) then {
+		_player setVelocity [0,0,0];
+		_player setDir (getDir _player + _currentTrainDir - _lastTrainDir);
+		_player setPosASL (AGLtoASL (_train modelToWorldVisual _lastPlayerPositionModel));
+	};
+	
 };
 
 ATRAIN_fnc_rideOnTrain = {
@@ -2449,7 +2474,7 @@ ATRAIN_fnc_rideOnTrain = {
 	while {true} do {
 		private _currentTrain = [_player] call ATRAIN_fnc_getTrainUnderPlayer;
 		private _currentPassengerCar = _player getVariable ["ATRAIN_Current_Train_Passenger_Car",objNull];
-		if(isNull _currentTrain || _currentTrain != _train || !isNull _currentPassengerCar || !alive _player) exitWith {};
+		if(isNull _currentTrain || _currentTrain != _train || !isNull _currentPassengerCar || !alive _player || vehicle player != player) exitWith {};
 		sleep 0.1;
 	};
 	_player setVariable ["ATRAIN_Riding_On_Train", nil];	
@@ -2571,7 +2596,7 @@ ATRAIN_fnc_init = {
 				private _ridingOnTrain = player getVariable ["ATRAIN_Riding_On_Train", objNull];
 				private _currentPassengerCar = player getVariable ["ATRAIN_Current_Train_Passenger_Car",objNull];
 				if(isNull _ridingOnTrain && isNull _currentPassengerCar) then {
-					if((getPosATL player) select 2 > 0.5) then {
+					if((getPosATL player) select 2 > 0.5 && vehicle player == player) then {
 						private _train = [player] call ATRAIN_fnc_getTrainUnderPlayer;
 						if(!isNull _train) then {
 							player setVariable ["ATRAIN_Riding_On_Train", _train];
